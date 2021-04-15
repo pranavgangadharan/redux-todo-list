@@ -1,24 +1,44 @@
 import './App.css';
 import {useSelector, useDispatch} from 'react-redux'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
+import Axios from 'axios'
 
 const Todos = () => {
+
+  const [todo, setTodo] = useState();
   const dispatch = useDispatch();
   const todos = useSelector(state => state.todos);
-  const handleClick = id => dispatch({
+  
+  useEffect(()=>{
+    Axios.get(`http://localhost:8080/api/tutorials`)
+      .then(res => {
+        const todoitem = res.data;
+        setTodo(todoitem);
+      })
+  })
+
+  const handleClick = id => {dispatch({
     type: 'DELETE_TODO',
     payload: id,
   });
-  if(!todos || !todos.length) {
+  Axios.delete(`http://localhost:8080/api/tutorials/${id}`)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      })
+}
+  if(!todo || !todo.length) {
     return <p>NO TODOS</p>
   }
   return (
     <ul>
-      {todos.map(todo=> <li onClick={() => handleClick(todo.id)}>{todo.label}</li>)}
+      {todo.map(item=> <li onClick={() => handleClick(item.id)}>{item.label}</li>)}
     </ul>
   )
 
 }
+
+
 const TodoInput = () => {
 const dispatch = useDispatch();
 const [newTodo, setNewTodo] = useState()
@@ -32,7 +52,15 @@ const handleClick = () => {
     label: newerTodo,
     id: Math.ceil(Math.random()*100),
   }
-})}
+} 
+)
+Axios.post(`http://localhost:8080/api/tutorials`, { label: newerTodo,
+id: Math.ceil(Math.random()*100) })
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      })
+}
 
 
 return (
