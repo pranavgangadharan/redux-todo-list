@@ -27,14 +27,19 @@ const Todos = () => {
         console.log(res.data);
       })
 }
+const handleEdit = (id, edititem) => {
+  const item = prompt("Edit the item", edititem);
+  Axios.put(`http://localhost:8080/api/tutorials/${id}`, { label: item });
+}
   if(!todo || !todo.length) {
     return <p>NO TODOS</p>
   }
   return (
     <ul>
-      {todo.map(item=> <li onClick={() => handleClick(item.id)}>{item.label}</li>)}
+      {todo.map(item=><> <li onClick={() => handleClick(item.id)}>{item.label}</li> <button onClick={()=>handleEdit(item.id, item.label)}>Edit</button></>)}
     </ul>
   )
+ 
 
 }
 
